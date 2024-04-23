@@ -17,7 +17,8 @@ export default authMiddleware({
       }
 
       if (!auth.userId && !auth.isPublicRoute) {
-        return RedirectToSignIn({ signInFallbackRedirectUrl: req.url })
+        const signIn = new URL(`/login?redirect_url=${new URL(req.url)}`, req.url)
+        return NextResponse.redirect(signIn)
       }
 
       if (auth.userId && !auth.orgId && req.nextUrl.pathname !== '/select-org') {
