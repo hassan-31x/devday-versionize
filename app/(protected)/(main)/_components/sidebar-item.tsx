@@ -1,58 +1,57 @@
+import { usePathname, useRouter } from "next/navigation";
+import Image from "next/image";
+import { CheckCheck, Folders, Settings, Users } from "lucide-react";
 import { AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { CheckCheck, Folders, Settings, Users } from "lucide-react";
-import Image from "next/image";
-import { usePathname, useRouter } from "next/navigation";
 
 type Props = {
   isExpanded: boolean;
   isActive: boolean;
   organization: Organization;
   handleExpand: (id: string) => void;
-}
+};
 
-const SidebarItem = ({
-  isExpanded,
-  isActive,
-  organization,
-  handleExpand
-}: Props) => {
-  const router = useRouter()
-  const pathname = usePathname()
+const SidebarItem = ({ isExpanded, isActive, organization, handleExpand }: Props) => {
+  const router = useRouter();
+  const pathname = usePathname();
 
   const sidebarItems = [
     {
-      label: 'Files',
+      label: "Files",
       icon: <Folders className="w-4 h-4 mr-2" />,
-      href: `/organization/${organization.id}`
+      href: `/organization/${organization.id}`,
     },
     {
-      label: 'Tasks',
+      label: "Tasks",
       icon: <CheckCheck className="w-4 h-4 mr-2" />,
-      href: `/organization/${organization.id}/tasks`
+      href: `/organization/${organization.id}/tasks`,
     },
     {
-      label: 'Memebers',
+      label: "Memebers",
       icon: <Users className="w-4 h-4 mr-2" />,
-      href: `/organization/${organization.id}/members`
+      href: `/organization/${organization.id}/members`,
     },
     {
-      label: 'Settings',
+      label: "Settings",
       icon: <Settings className="w-4 h-4 mr-2" />,
-      href: `/organization/${organization.id}/settings`
+      href: `/organization/${organization.id}/settings`,
     },
-  ]
+  ];
 
   const handleRedirect = (href: string) => {
-    router.push(href)
-  }
+    router.push(href);
+  };
 
   return (
     <AccordionItem value={organization.id} className="border-none">
-      <AccordionTrigger onClick={() => handleExpand(organization.id)} className={cn('flex items-center gap-x-2 p-1.5 text-neutral-700 rounded-md hover:bg-neutral-500/10 transition text-start no-underline hover:no-underline',
-        isActive && !isExpanded ? 'bg-sky-500/10' : 'text-sky-700',
-      )}>
+      <AccordionTrigger
+        onClick={() => handleExpand(organization.id)}
+        className={cn(
+          "flex items-center gap-x-2 p-1.5 text-neutral-700 rounded-md hover:bg-neutral-500/10 transition text-start no-underline hover:no-underline",
+          isActive && !isExpanded ? "bg-sky-500/10" : "text-sky-700"
+        )}
+      >
         <div className="flex items-center gap-x-2">
           <div className="w-7 h-7 relative">
             <Image fill src={organization.imageUrl} alt="organization" className="rounded-sm object-cover" />
@@ -60,25 +59,23 @@ const SidebarItem = ({
 
           <span className="font-medium text-sm">{organization.name}</span>
         </div>
-
       </AccordionTrigger>
 
       <AccordionContent className="pt-1 text-neutral-700">
         {sidebarItems.map((item) => (
           <Button
             key={item.href}
-            size='sm'
+            size="sm"
             onClick={() => handleRedirect(item.href)}
-            variant='ghost'
-            className={cn('w-full font-normal justify-start pl-10 mb-1',
-              pathname === item.href && 'bg-sky-500/10 text-sky-700'
-            )}
-          >{item.icon} {item.label}</Button>
+            variant="ghost"
+            className={cn("w-full font-normal justify-start pl-10 mb-1", pathname === item.href && "bg-sky-500/10 text-sky-700")}
+          >
+            {item.icon} {item.label}
+          </Button>
         ))}
       </AccordionContent>
-
     </AccordionItem>
-  )
-}
+  );
+};
 
-export default SidebarItem
+export default SidebarItem;
