@@ -4,6 +4,7 @@ import { CheckCheck, Folders, Settings, Users } from "lucide-react";
 import { AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type Props = {
   isExpanded: boolean;
@@ -77,5 +78,16 @@ const SidebarItem = ({ isExpanded, isActive, organization, handleExpand }: Props
     </AccordionItem>
   );
 };
+
+SidebarItem.Skeleton = function SkeletonSidebarItem() {
+  return (
+    <div className="flex items-center gap-x-2">
+      <div className="w-10 h-10 relative shrink-0">
+        <Skeleton className="h-full w-full absolute" />
+      </div>
+        <Skeleton className="h-10 w-full" />
+    </div>
+  )
+}
 
 export default SidebarItem;
