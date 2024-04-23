@@ -29,7 +29,7 @@ const SidebarItem = ({ isExpanded, isActive, organization, handleExpand }: Props
       href: `/organization/${organization.id}/tasks`,
     },
     {
-      label: "Memebers",
+      label: "Members",
       icon: <Users className="w-4 h-4 mr-2" />,
       href: `/organization/${organization.id}/members`,
     },
