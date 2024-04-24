@@ -7,9 +7,10 @@ type Props = {
   fileName: string;
   fileType: "doc" | "image";
   path: string;
+  handleDelete: (path: string) => void;
 };
 
-const SingleFile = ({ fileName, fileType, path }: Props) => {
+const SingleFile = ({ fileName, fileType, path, handleDelete }: Props) => {
   const icons = {
     doc: <File className="h-4 w-4" />,
     image: <FileImage className="h-4 w-4" />,
@@ -39,7 +40,8 @@ const SingleFile = ({ fileName, fileType, path }: Props) => {
         )}
       </div>
 
-      <Trash2 className="h-4 w-4 cursor-pointer text-red-600" />
+
+      <Trash2 className="h-4 w-4 cursor-pointer text-red-600 hover:text-red-500" onClick={() => handleDelete(path)} />
     </div>
   );
 };
