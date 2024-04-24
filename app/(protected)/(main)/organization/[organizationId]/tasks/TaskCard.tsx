@@ -1,8 +1,10 @@
 'useclient'
 import { useState } from "react";
-import { Id,Task } from "@/app/types";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+
+type Id = any
+type Task = any
 
 interface Props {
   task: Task;
