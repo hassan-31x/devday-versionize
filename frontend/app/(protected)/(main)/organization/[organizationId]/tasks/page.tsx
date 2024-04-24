@@ -1,6 +1,6 @@
 "use client"
 import { useMemo, useState,useEffect } from "react";
-import { Column, Id, Task } from "@/app/types";
+// import { Column, Id, Task } from "@/app/types";
 import ColumnContainer from "./ColumnContainer";
 import {
   DndContext,
@@ -17,6 +17,9 @@ import { createPortal } from "react-dom";
 import TaskCard from "./TaskCard";
 // import { database,app } from "@/lib/firebase";
 // import { ref, onValue, off, push, remove, update } from "firebase/database";
+type Column = any
+type Id = any
+type Task = any
 
 const defaultCols: Column[] = [
   {
