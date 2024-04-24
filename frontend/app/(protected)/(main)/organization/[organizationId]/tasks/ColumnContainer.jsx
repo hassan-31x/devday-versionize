@@ -1,8 +1,6 @@
 'use client';
 import { SortableContext, useSortable } from "@dnd-kit/sortable";
-
 import { CSS } from "@dnd-kit/utilities";
-import { height } from "@mui/system";
 import { useMemo, useState } from "react";
 import TaskCard from "./TaskCard";
 
@@ -43,7 +41,7 @@ function ColumnContainer({
     backgroundColor: "white",
     padding: "12px",
     marginBottom: "8px",
-    width:'300px',
+    width: '300px',
   };
 
   if (isDragging) {
@@ -157,7 +155,7 @@ function ColumnContainer({
       <button
         className="flex gap-2 items-center  text-sm  border-gray-100
   r border-2 rounded-md  border-x-columnBackgroundColor hover:bg-mainBackgroundColor hover:text-grey-500 active:bg-black "
-        style={{ width: '120px', height: '40px', borderRadius:'1rem' }}  
+        style={{ width: '120px', height: '40px', borderRadius: '1rem' }}
         onClick={(e) => {
           e.stopPropagation();
           createTask(column.id);

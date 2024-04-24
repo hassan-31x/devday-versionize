@@ -39,7 +39,7 @@ const defaultCols: Column[] = [
 
 const defaultTasks: Task[] = [];
 
-function KanbanBoard() {
+function IssueManagement() {
   const [columns, setColumns] = useState<Column[]>(defaultCols);
   const columnsId = useMemo(() => columns.map((col) => col.id), [columns]);
 
@@ -216,4 +216,4 @@ function KanbanBoard() {
 function generateId() {
   return Math.floor(Math.random() * 10001);
 }
-export default KanbanBoard;
+export default IssueManagement;
