@@ -1,30 +1,17 @@
-'use client';
+"use client";
 import { SortableContext, useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useMemo, useState } from "react";
 import TaskCard from "./TaskCard";
 
-
-function ColumnContainer({
-  column,
-  createTask,
-  tasks,
-  updateTask,
-}) {
+function ColumnContainer({ column, createTask, tasks, updateTask }: any) {
   const [editMode, setEditMode] = useState(false);
 
   const tasksIds = useMemo(() => {
-    return tasks.map((task) => task.id);
+    return tasks.map((task: any) => task.id);
   }, [tasks]);
 
-  const {
-    setNodeRef,
-    attributes,
-    listeners,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({
+  const { setNodeRef, attributes, listeners, transform, transition, isDragging } = useSortable({
     id: column.id,
     data: {
       type: "Column",
@@ -41,7 +28,7 @@ function ColumnContainer({
     backgroundColor: "white",
     padding: "12px",
     marginBottom: "8px",
-    width: '300px',
+    width: "300px",
   };
 
   if (isDragging) {
@@ -103,29 +90,24 @@ function ColumnContainer({
       border-4
       flex
       items-center
-      justify-between
-      "
-      >
+      justify-between">
         <div className="flex gap-2">
           <div
-            className="
-        flex
+            className="flex
         justify-center
         items-center
         bg-columnBackgroundColor
         px-2
         py-1
         text-sm
-        rounded-full
-        "
-          >
-          </div>
+        rounded-full"></div>
           {!editMode && column.title}
           {editMode && (
             <input
               className="border rounded outline-none px-2"
               value={column.title}
-              onChange={(e) => updateColumn(column.id, e.target.value)}
+              // onChange={(e) => updateColumn(column.id, e.target.value)}
+              onChange={(e) => console.log(e)}
               autoFocus
               onBlur={() => {
                 setEditMode(false);
@@ -142,12 +124,8 @@ function ColumnContainer({
       {/* Column task container */}
       <div className=" flex flex-grow flex-col gap-2 p-2 overflow-x-hidden overflow-y-auto">
         <SortableContext items={tasksIds}>
-          {tasks.map((task) => (
-            <TaskCard
-              key={task.id}
-              task={task}
-              updateTask={updateTask}
-            />
+          {tasks.map((task: any) => (
+            <TaskCard key={task.id} task={task} updateTask={updateTask} />
           ))}
         </SortableContext>
       </div>
@@ -155,7 +133,7 @@ function ColumnContainer({
       <button
         className="flex gap-2 items-center  text-sm  border-gray-100
   r border-2 rounded-md  border-x-columnBackgroundColor hover:bg-mainBackgroundColor hover:text-grey-500 active:bg-black "
-        style={{ width: '120px', height: '40px', borderRadius: '1rem' }}
+        style={{ width: "120px", height: "40px", borderRadius: "1rem" }}
         onClick={(e) => {
           e.stopPropagation();
           createTask(column.id);
@@ -164,10 +142,6 @@ function ColumnContainer({
         <div className="ms-2"></div>
         Create Issue
       </button>
-
-
-
-
     </div>
   );
 }
