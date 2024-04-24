@@ -6,4 +6,4 @@ import { getDatabase } from 'firebase/database';
 const firebaseApp = initializeApp(firebaseConfig);
 const firebaseDatabase = getDatabase(firebaseApp); // Initialize the database
 
-export { firebaseApp as app, firebaseDatabase as database };
+export { firebaseApp as app, firebaseDatabase as db };

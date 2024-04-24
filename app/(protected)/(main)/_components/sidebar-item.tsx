@@ -1,6 +1,6 @@
 import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
-import { CheckCheck, Folders, Settings, Users } from "lucide-react";
+import { CheckCheck, Folders, GitGraph, Settings } from "lucide-react";
 import { AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -24,14 +24,14 @@ const SidebarItem = ({ isExpanded, isActive, organization, handleExpand }: Props
       href: `/organization/${organization.id}`,
     },
     {
+      label: "Commits",
+      icon: <GitGraph className="w-4 h-4 mr-2" />,
+      href: `/organization/${organization.id}/commits`,
+    },
+    {
       label: "Tasks",
       icon: <CheckCheck className="w-4 h-4 mr-2" />,
       href: `/organization/${organization.id}/tasks`,
-    },
-    {
-      label: "Members",
-      icon: <Users className="w-4 h-4 mr-2" />,
-      href: `/organization/${organization.id}/members`,
     },
     {
       label: "Settings",
