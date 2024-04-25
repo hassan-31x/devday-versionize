@@ -8,6 +8,7 @@ import FileCommits from "../../_components/file-commits";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { useAuth, useUser } from "@clerk/nextjs";
 
 type Props = {
   params: {
@@ -22,6 +23,8 @@ const CommitIdPage: React.FC<Props> = ({ params: { organizationId, commitId } }:
   const [loading, setLoading] = useState(true);
   const [commitMessage, setCommitMessage] = useState("");
 
+  const { orgRole } = useAuth()
+  console.log("🚀 ~ orgRole:", orgRole)
   const router = useRouter()
 
   const getFileType = (fileName: string) => {
@@ -130,7 +133,7 @@ const CommitIdPage: React.FC<Props> = ({ params: { organizationId, commitId } }:
         <>
         <div className="flex justify-between">
           <h3 className="font-semibold text-3xl mb-6 mt-2">Commit Message: {commitMessage}</h3>
-          <Button variant='outline' onClick={revertChanges}>Revert Back</Button>
+          {orgRole === 'org:admin' && <Button variant='outline' onClick={revertChanges}>Revert Back</Button>}
         </div>
           {files.map((file) => (
             <FileCommits key={file.id} fileName={file.name} fileType={file.type} path={file.path} />
