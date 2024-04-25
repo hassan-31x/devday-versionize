@@ -60,7 +60,7 @@ const CommitsPage: React.FC<Props> = ({ params: { organizationId } }: Props) => 
     <div className="w-full">
       {loading ? (
         <>
-        <Skeleton className="h-12 mb-4 w-[30%]" />
+          <Skeleton className="h-12 mb-4 w-[30%]" />
           <div className="flex flex-col gap-1">
             {Array.from({ length: 6 }).map((_, idx) => (
               <Skeleton key={idx} className="h-10 w-full" />
@@ -74,15 +74,15 @@ const CommitsPage: React.FC<Props> = ({ params: { organizationId } }: Props) => 
         </>
       ) : commits.length > 0 ? (
         <>
-        <h3 className="font-bold text-4xl mb-6 mt-2">Previous Commits</h3>
-        {commits.map((commit) => (
-          <div className="w-full hover:bg-slate-50 h-8 border py-2 px-3 border-gray-400 flex justify-between items-center">
-            <span className="font-medium">{commit.message}</span>
-            <Link href={`/organization/${organizationId}/commits/${commit.id}`} className="text-slate-800 hover:underline cursor-pointer text-sm">
-              {commit.id}
-            </Link>
-          </div>
-        ))}
+          <h3 className="font-bold text-4xl mb-6 mt-2">Previous Commits</h3>
+          {commits.map((commit) => (
+            <div className="w-full hover:bg-slate-50 h-8 border py-2 px-3 border-gray-400 flex justify-between items-center">
+              <span className="font-medium">{commit.message}</span>
+              <Link href={`/organization/${organizationId}/commits/${commit.id}`} className="text-slate-800 hover:underline cursor-pointer text-sm" target="_blank">
+                {commit.id}
+              </Link>
+            </div>
+          ))}
         </>
       ) : (
         <h3 className="font-medium text-lg text-center">No files to show</h3>

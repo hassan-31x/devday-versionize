@@ -30,7 +30,7 @@ const SingleFile = ({ fileName, fileType, path, handleDelete }: Props) => {
     };
 
     fetchDownloadUrl();
-  }, [fileName]);
+  }, [path]);
 
   const delete2 = () => {
     handleDelete(path, commitMessage);

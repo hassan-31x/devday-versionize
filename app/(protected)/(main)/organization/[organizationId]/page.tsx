@@ -111,8 +111,9 @@ const OrganizationIdPage: React.FC<Props> = ({ params: { organizationId } }: Pro
       toast.error("Please select a file and add a commit message");
       return;
     };
-    const newFiles = [...files.map((file: any) => file.path), `/${url.pathRef.fullPath}`];
     try {
+      const newFiles = [...files.map((file: any) => file.path), `/${url.pathRef.fullPath}`];
+      console.log(url)
 
       const projectCollection = collection(db, "projects");
       const q = query(projectCollection, where("projectId", "==", organizationId));
