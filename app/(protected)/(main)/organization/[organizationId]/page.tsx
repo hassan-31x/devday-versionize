@@ -3,7 +3,7 @@
 import { ChangeEvent, useEffect, useState } from "react";
 import { db, storage } from "@/lib/firebaseConfig";
 import SingleFile from "./_components/file";
-import { addDoc, collection, getDocs, query, serverTimestamp, where } from "firebase/firestore";
+import { addDoc, collection, getDocs, orderBy, query, serverTimestamp, where } from "firebase/firestore";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -54,7 +54,7 @@ const OrganizationIdPage: React.FC<Props> = ({ params: { organizationId } }: Pro
 
         projectSnapshot.forEach(async (projectDoc) => {
           const commitsCollectionRef = collection(projectDoc.ref, "commits");
-          const commitsQuery = query(commitsCollectionRef);
+          const commitsQuery = query(commitsCollectionRef, orderBy("createdAt", "desc"));
           const commitsSnapshot = await getDocs(commitsQuery);
 
           const { files } = commitsSnapshot.docs[0].data();
@@ -69,10 +69,10 @@ const OrganizationIdPage: React.FC<Props> = ({ params: { organizationId } }: Pro
               };
             }),
           ]);
+          setLoading(false);
         });
       } catch (error) {
         console.error("Error fetching commits:", error);
-      } finally {
         setLoading(false);
       }
     };
@@ -107,14 +107,18 @@ const OrganizationIdPage: React.FC<Props> = ({ params: { organizationId } }: Pro
   };
 
   const handleAdd = async (commitMessage: string) => {
-    if (url.pathRef === "" || commitMessage === '') return;
+    if (url.pathRef === "" || commitMessage === '') {
+      toast.error("Please select a file and add a commit message");
+      return;
+    };
+    const newFiles = [...files.map((file: any) => file.path), `/${url.pathRef.fullPath}`];
     try {
-      const newFiles = [...files.map((file: any) => file.path), `/${url.pathRef}`];
 
       const projectCollection = collection(db, "projects");
       const q = query(projectCollection, where("projectId", "==", organizationId));
       const projectSnapshot = await getDocs(q);
       const projectDoc = projectSnapshot.docs[0];
+
 
       const commitsCollectionRef = collection(projectDoc.ref, "commits");
       addDoc(commitsCollectionRef, {
@@ -124,10 +128,13 @@ const OrganizationIdPage: React.FC<Props> = ({ params: { organizationId } }: Pro
       });
 
       toast.success("File Added successfully");
-      router.refresh();
+      window.location.reload();
     } catch (error) {
       console.error("Error adding file:", error);
       toast.error("Error adding file");
+    } finally {
+      setIsOpen(false);
+      setCommitMessage("");
     }
   };
 
@@ -142,7 +149,6 @@ const OrganizationIdPage: React.FC<Props> = ({ params: { organizationId } }: Pro
 
       const pathRef = ref(storage, uniqueName);
       const url = await getDownloadURL(pathRef);
-      console.log("🚀 ~ uploadImage ~ url:", pathRef, url)
       setUrl({ pathRef, url });
     }
   };
@@ -178,7 +184,7 @@ const OrganizationIdPage: React.FC<Props> = ({ params: { organizationId } }: Pro
             )}
             <div className="flex gap-3 items-center mt-5">
               <Input value={commitMessage} onChange={(e) => setCommitMessage(e.target.value)} placeholder="commit message" />
-              <Button onClick={handleAdd}>Add</Button>
+              <Button onClick={() => handleAdd(commitMessage)}>Add</Button>
             </div>
           </div>
         </DialogContent>
