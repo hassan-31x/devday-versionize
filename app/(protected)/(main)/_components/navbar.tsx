@@ -14,10 +14,10 @@ const Navbar = () => {
           <Logo />
         </div>
 
-        <Button className="rounded-sm md:h-auto md:py-1.5 md:px-2">
+        {/* <Button className="rounded-sm md:h-auto md:py-1.5 md:px-2">
           <span className="hidden md:block">Create</span>
           <Plus className="h-4 w-4 block md:hidden" />
-        </Button>
+        </Button> */}
       </div>
 
       <div className="ml-auto flex items-center gap-x-2">

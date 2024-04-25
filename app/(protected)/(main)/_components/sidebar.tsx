@@ -57,7 +57,7 @@ const Sidebar = ({ storageKey = "versionize-sidebar" }: SidebarProps) => {
   return (
     <>
       <div className="font-medium text-xs flex items-center mb-1">
-        <span className="pl-4">Workspaces</span>
+        <span className="pl-4">Projects</span>
         <Button asChild type="button" size="icon" variant="ghost" className="ml-auto">
           <Link href="/select-org">
             <Plus className="h-4 w-4" />

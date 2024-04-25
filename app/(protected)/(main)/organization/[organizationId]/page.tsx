@@ -92,14 +92,14 @@ const OrganizationIdPage: React.FC<Props> = ({ params: { organizationId } }: Pro
       const projectDoc = projectSnapshot.docs[0];
 
       const commitsCollectionRef = collection(projectDoc.ref, "commits");
-      addDoc(commitsCollectionRef, {
+      await addDoc(commitsCollectionRef, {
         message: commitMessage,
         createdAt: serverTimestamp(),
         files: newFiles,
       });
 
       toast.success("File deleted successfully");
-      router.refresh();
+      window.location.reload();
     } catch (error) {
       console.error("Error deleting file:", error);
       toast.error("Error deleting file");
@@ -121,7 +121,7 @@ const OrganizationIdPage: React.FC<Props> = ({ params: { organizationId } }: Pro
 
 
       const commitsCollectionRef = collection(projectDoc.ref, "commits");
-      addDoc(commitsCollectionRef, {
+      await addDoc(commitsCollectionRef, {
         message: commitMessage,
         createdAt: serverTimestamp(),
         files: newFiles,
