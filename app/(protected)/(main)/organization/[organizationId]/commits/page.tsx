@@ -15,7 +15,7 @@ type Props = {
 
 const CommitsPage: React.FC<Props> = ({ params: { organizationId } }: Props) => {
   const [isMounted, setIsMounted] = useState(false);
-  const [commits, setCommits] = useState<{ id: string; message: string }[]>([]);
+  const [commits, setCommits] = useState<{ id: string; message: string, time: string }[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -40,6 +40,7 @@ const CommitsPage: React.FC<Props> = ({ params: { organizationId } }: Props) => 
             temp.push({
               id: commitDoc.id,
               message: commitData.message,
+              time: commitData.createdAt?.toDate(),
             });
           });
           setCommits(temp);
@@ -54,6 +55,14 @@ const CommitsPage: React.FC<Props> = ({ params: { organizationId } }: Props) => 
     fetchCommits();
   }, [organizationId]);
 
+  const formatDateTime = (dateTimeString: string) => {
+    const date = new Date(dateTimeString);
+    const formattedDate = date.toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' });
+    const formattedTime = date.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', hour12: false });
+
+    return `${formattedDate} at ${formattedTime}`;
+}
+  
   if (!isMounted) return null;
 
   return (
@@ -75,9 +84,11 @@ const CommitsPage: React.FC<Props> = ({ params: { organizationId } }: Props) => 
       ) : commits.length > 0 ? (
         <>
           <h3 className="font-bold text-4xl mb-6 mt-2">Previous Commits</h3>
-          {commits.map((commit) => (
-            <div className="w-full hover:bg-slate-50 h-8 border py-2 px-3 border-gray-400 flex justify-between items-center">
-              <span className="font-medium">{commit.message}</span>
+          {commits.map((commit, idx) => (
+            <div className="w-full hover:bg-slate-50 h-8 border py-2 px-3 border-gray-400 flex justify-between items-center" key={idx}>
+              <div><span className="font-medium">{commit.message}</span>
+              <span className="text-xs ml-2">{formatDateTime(commit.time)}</span>
+              </div>
               <Link href={`/organization/${organizationId}/commits/${commit.id}`} className="text-slate-800 hover:underline cursor-pointer text-sm" target="_blank">
                 {commit.id}
               </Link>

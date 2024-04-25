@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import Image from "next/image";
+import { useOrganization, useOrganizationList } from "@clerk/nextjs";
 
 type Props = {
   params: {
@@ -28,8 +29,7 @@ const OrganizationIdPage: React.FC<Props> = ({ params: { organizationId } }: Pro
   const [url, setUrl] = useState({ pathRef: "", url: "" } as any);
   const [commitMessage, setCommitMessage] = useState("");
 
-  const router = useRouter();
-
+  const { organization: activeOrganization, isLoaded: isOrgLoaded } = useOrganization();
   const getFileType = (fileName: string) => {
     const fileExtension = fileName.split(".").pop();
     const imageExtensions = ["jpg", "jpeg", "png", "gif"];
@@ -52,12 +52,12 @@ const OrganizationIdPage: React.FC<Props> = ({ params: { organizationId } }: Pro
         const q = query(projectCollection, where("projectId", "==", organizationId));
         const projectSnapshot = await getDocs(q);
 
-        projectSnapshot.forEach(async (projectDoc) => {
+        projectSnapshot?.forEach(async (projectDoc) => {
           const commitsCollectionRef = collection(projectDoc.ref, "commits");
           const commitsQuery = query(commitsCollectionRef, orderBy("createdAt", "desc"));
           const commitsSnapshot = await getDocs(commitsQuery);
 
-          const { files } = commitsSnapshot.docs[0].data();
+          const { files } = commitsSnapshot.docs[0]?.data();
 
           setFiles([
             ...files.map((file: any, idx: number) => {
@@ -69,10 +69,10 @@ const OrganizationIdPage: React.FC<Props> = ({ params: { organizationId } }: Pro
               };
             }),
           ]);
-          setLoading(false);
         });
       } catch (error) {
         console.error("Error fetching commits:", error);
+      } finally {
         setLoading(false);
       }
     };
@@ -113,14 +113,25 @@ const OrganizationIdPage: React.FC<Props> = ({ params: { organizationId } }: Pro
     };
     try {
       const newFiles = [...files.map((file: any) => file.path), `/${url.pathRef.fullPath}`];
-      console.log(url)
 
       const projectCollection = collection(db, "projects");
       const q = query(projectCollection, where("projectId", "==", organizationId));
       const projectSnapshot = await getDocs(q);
-      const projectDoc = projectSnapshot.docs[0];
+      
+      let projectDoc;
+      
+      if (projectSnapshot.empty) {
+        const newProjectDocRef = await addDoc(projectCollection, {
+          projectId: organizationId,
+          name: activeOrganization?.name
+        });
+        projectDoc = newProjectDocRef;
+        console.log("🚀 ~ handleAdd ~ newProjectDocRef:", newProjectDocRef)
+      } else {
+        projectDoc = projectSnapshot.docs[0];
+      }
 
-
+      //@ts-ignore
       const commitsCollectionRef = collection(projectDoc.ref, "commits");
       await addDoc(commitsCollectionRef, {
         message: commitMessage,
@@ -140,7 +151,7 @@ const OrganizationIdPage: React.FC<Props> = ({ params: { organizationId } }: Pro
   };
 
   const uploadImage = async (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
+    if (e.target?.files) {
       const imageUpload = e.target.files[0];
 
       const uniqueName = `${organizationId}/${imageUpload.name}`;
