@@ -52,9 +52,9 @@ const SingleFile = ({ fileName, fileType, path, handleDelete }: Props) => {
 
       <Dialog open={isOpen}>
         <DialogTrigger>
-          <Trash2 className="h-4 w-4 cursor-pointer text-red-600 hover:text-red-500" />
+          <Trash2 className="h-4 w-4 cursor-pointer text-red-600 hover:text-red-500" onClick={() => setIsOpen(true)} />
         </DialogTrigger>
-        <DialogContent>
+        <DialogContent handleClose={() => setIsOpen(false)}>
           <DialogHeader>
             <DialogTitle className="leading-6">Are you absolutely sure you want to delete '{fileName}'?</DialogTitle>
             <DialogDescription className="pt-1">This action cannot be undone. This will delete your file. However, you can recover it later from commit history.</DialogDescription>

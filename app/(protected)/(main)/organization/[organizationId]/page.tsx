@@ -163,7 +163,7 @@ const OrganizationIdPage: React.FC<Props> = ({ params: { organizationId } }: Pro
             </Button>
           </div>
         </DialogTrigger>
-        <DialogContent>
+        <DialogContent handleClose={() => setIsOpen(false)}>
           <DialogHeader>
             <DialogTitle className="leading-6">Select file</DialogTitle>
             <DialogDescription className="pt-1">Select any file to upload and add a commit message</DialogDescription>
