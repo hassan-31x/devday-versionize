@@ -2,9 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { db } from "@/lib/firebaseConfig";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { addDoc, collection, getDocs, query, serverTimestamp, where } from "firebase/firestore";
 import { Skeleton } from "@/components/ui/skeleton";
 import FileCommits from "../../_components/file-commits";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 type Props = {
   params: {
@@ -18,6 +21,8 @@ const CommitIdPage: React.FC<Props> = ({ params: { organizationId, commitId } }:
   const [files, setFiles] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [commitMessage, setCommitMessage] = useState("");
+
+  const router = useRouter()
 
   const getFileType = (fileName: string) => {
     const fileExtension = fileName.split(".").pop();
@@ -76,6 +81,33 @@ const CommitIdPage: React.FC<Props> = ({ params: { organizationId, commitId } }:
     fetchCommits();
   }, [organizationId]);
 
+  const revertChanges = async () => {
+    try {
+      const newFiles = [...files.map((file) => file.path)];
+
+      const projectCollection = collection(db, "projects");
+      const q = query(projectCollection, where("projectId", "==", organizationId));
+      const projectSnapshot = await getDocs(q);
+      const projectDoc = projectSnapshot.docs[0];
+
+
+      const commitsCollectionRef = collection(projectDoc.ref, "commits");
+      await addDoc(commitsCollectionRef, {
+        message: commitMessage,
+        createdAt: serverTimestamp(),
+        files: newFiles,
+      });
+
+      toast.success("Files Restored Back");
+      router.replace(`/organization/${organizationId}`);
+    } catch (error) {
+      console.error("Error adding file:", error);
+      toast.error("Error adding file");
+    } finally {
+      setCommitMessage("");
+    }
+  };
+
   if (!isMounted) return null;
 
   return (
@@ -96,7 +128,10 @@ const CommitIdPage: React.FC<Props> = ({ params: { organizationId, commitId } }:
         </>
       ) : files.length > 0 ? (
         <>
+        <div className="flex justify-between">
           <h3 className="font-semibold text-3xl mb-6 mt-2">Commit Message: {commitMessage}</h3>
+          <Button variant='outline' onClick={revertChanges}>Revert Back</Button>
+        </div>
           {files.map((file) => (
             <FileCommits key={file.id} fileName={file.name} fileType={file.type} path={file.path} />
           ))}
