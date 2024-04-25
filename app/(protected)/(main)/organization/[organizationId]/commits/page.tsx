@@ -1,17 +1,11 @@
 "use client";
 
-import { ChangeEvent, useEffect, useState } from "react";
-import { db, storage } from "@/lib/firebaseConfig";
+import { useEffect, useState } from "react";
+import { db } from "@/lib/firebaseConfig";
 import { addDoc, collection, getDocs, orderBy, query, serverTimestamp, where } from "firebase/firestore";
-import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { useRouter } from "next/navigation";
-import { FileCheck2, FilePlus2, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import Image from "next/image";
+import Link from "next/link";
 
 type Props = {
   params: {
@@ -21,20 +15,8 @@ type Props = {
 
 const CommitsPage: React.FC<Props> = ({ params: { organizationId } }: Props) => {
   const [isMounted, setIsMounted] = useState(false);
-  const [commits, setCommits] = useState<any[]>([]);
+  const [commits, setCommits] = useState<{ id: string; message: string }[]>([]);
   const [loading, setLoading] = useState(true);
-
-
-  const getFileType = (fileName: string) => {
-    const fileExtension = fileName.split(".").pop();
-    const imageExtensions = ["jpg", "jpeg", "png", "gif"];
-    return imageExtensions.includes(fileExtension!) ? "image" : "doc";
-  };
-
-  const getFileName = (fileName: string) => {
-    const splitFileName = fileName.split("/");
-    return splitFileName[splitFileName.length - 1];
-  };
 
   useEffect(() => {
     setIsMounted(true);
@@ -51,19 +33,16 @@ const CommitsPage: React.FC<Props> = ({ params: { organizationId } }: Props) => 
           const commitsCollectionRef = collection(projectDoc.ref, "commits");
           const commitsQuery = query(commitsCollectionRef, orderBy("createdAt", "desc"));
           const commitsSnapshot = await getDocs(commitsQuery);
+          const temp: any = [];
 
-          const { files } = commitsSnapshot.docs[0].data();
-
-          setFiles([
-            ...commits.map((file: any, idx: number) => {
-              return {
-                id: idx,
-                path: file,
-                name: getFileName(file),
-                type: getFileType(file),
-              };
-            }),
-          ]);
+          commitsSnapshot.forEach(async (commitDoc) => {
+            const commitData = commitDoc.data();
+            temp.push({
+              id: commitDoc.id,
+              message: commitData.message,
+            });
+          });
+          setCommits(temp);
           setLoading(false);
         });
       } catch (error) {
@@ -77,24 +56,34 @@ const CommitsPage: React.FC<Props> = ({ params: { organizationId } }: Props) => 
 
   if (!isMounted) return null;
 
-
   return (
     <div className="w-full">
       {loading ? (
         <>
+        <Skeleton className="h-12 mb-4 w-[30%]" />
           <div className="flex flex-col gap-1">
             {Array.from({ length: 6 }).map((_, idx) => (
-              <Skeleton key={idx} className="h-8 w-full" />
+              <Skeleton key={idx} className="h-10 w-full" />
             ))}
           </div>
           <div className="flex flex-col gap-1 mt-5">
             {Array.from({ length: 2 }).map((_, idx) => (
-              <Skeleton key={idx} className="h-8 w-full" />
+              <Skeleton key={idx} className="h-10 w-full" />
             ))}
           </div>
         </>
       ) : commits.length > 0 ? (
-        commits.map((file) => <></>)
+        <>
+        <h3 className="font-bold text-4xl mb-6 mt-2">Previous Commits</h3>
+        {commits.map((commit) => (
+          <div className="w-full hover:bg-slate-50 h-8 border py-2 px-3 border-gray-400 flex justify-between items-center">
+            <span className="font-medium">{commit.message}</span>
+            <Link href={`/organization/${organizationId}/commits/${commit.id}`} className="text-slate-800 hover:underline cursor-pointer text-sm">
+              {commit.id}
+            </Link>
+          </div>
+        ))}
+        </>
       ) : (
         <h3 className="font-medium text-lg text-center">No files to show</h3>
       )}

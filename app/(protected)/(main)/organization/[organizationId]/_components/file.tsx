@@ -33,9 +33,9 @@ const SingleFile = ({ fileName, fileType, path, handleDelete }: Props) => {
   }, [fileName]);
 
   const delete2 = () => {
-    handleDelete(path, commitMessage)
-    setIsOpen(false)
-  }
+    handleDelete(path, commitMessage);
+    setIsOpen(false);
+  };
 
   return (
     <div className="w-full hover:bg-slate-50 h-8 border px-2 border-gray-400 flex justify-between items-center">
@@ -61,8 +61,10 @@ const SingleFile = ({ fileName, fileType, path, handleDelete }: Props) => {
           </DialogHeader>
 
           <div className="flex gap-3 items-center">
-          <Input value={commitMessage} onChange={e => setCommitMessage(e.target.value)} placeholder="commit message" />
-          <Button onClick={delete2} variant='destructive'>Delete</Button>
+            <Input value={commitMessage} onChange={(e) => setCommitMessage(e.target.value)} placeholder="commit message" />
+            <Button onClick={delete2} variant="destructive">
+              Delete
+            </Button>
           </div>
         </DialogContent>
       </Dialog>
